@@ -25,7 +25,6 @@ public class DotaFunApp extends Application{
   Button randomButton;
   Button challengeButton;
   Button firstButton;
-  ArrayList<Pane> paneList;
   FlowPane menuFlow;
   StackPane centerStack; 
 
@@ -40,7 +39,7 @@ public class DotaFunApp extends Application{
 
     System.setProperty("prism.lcdtext", "false");
     primaryStage.setTitle("Dota Fun App");
-    InputStream iconStream = getClass().getResourceAsStream("icon.png");
+    InputStream iconStream = getClass().getResourceAsStream("AppImages/icon.png");
     Image image = new Image(iconStream);
     primaryStage.getIcons().add(image);
     StackPane stackMain = new StackPane();
@@ -55,6 +54,18 @@ public class DotaFunApp extends Application{
     menuBox.setFillWidth(true);
 
     menuB = new Button("Menu");
+
+    menuB.setOnAction(new EventHandler<ActionEvent>() {
+
+      @Override
+      public void handle(ActionEvent ae) {
+
+        centerStack.getChildren().clear();
+        centerStack.getChildren().add(makeMenuFlow());   
+     
+    }});
+
+
     menuBox.setMargin(menuB, new Insets(10, 0, 0, 0));
     settingsB = new Button("Settings");
     exitB = new Button("Exit");
@@ -160,12 +171,95 @@ public class DotaFunApp extends Application{
       }
 
     }});
+    
+    centerStack.getChildren().add(makeMenuFlow());
+
+    Region spacer = new Region();
+    menuBox.setVgrow(spacer, Priority.ALWAYS);
+
+    menuBox.getChildren().addAll(menuB,settingsB,spacer,exitB); 
 
 
+    Bounds boundsInScene = arrowBox.localToParent(arrowBox.getBoundsInParent());
+
+  
+
+    AnchorPane.setTopAnchor(centerStack,0.0);
+    AnchorPane.setRightAnchor(centerStack,0.0);
+    AnchorPane.setBottomAnchor(centerStack,0.0);
+    AnchorPane.setLeftAnchor(centerStack, 115.0);
+    AnchorPane.setTopAnchor(hbox,0.0);
+    AnchorPane.setBottomAnchor(hbox,0.0);
+    AnchorPane.setLeftAnchor(hbox,0.0);
+
+    anchPane.getChildren().addAll(centerStack,hbox);
+    
+   
+    stackMain.getChildren().add(anchPane);
+    Scene mainScene = new Scene(stackMain,800,500);
+    primaryStage.setScene(mainScene);
+
+
+    primaryStage.show();
+
+
+  }
+
+  private StackPane makeChallengeAnim(String name) {
+
+    final Label label = new Label(name);
+    label.setStyle("-fx-text-fill: goldenrod; -fx-font-family: 'Comic Sans MS',serif; -fx-font-size: 30px ; -fx-text-alignment: center");
+    StackPane glass = new StackPane();
+    StackPane.setAlignment(label, Pos.CENTER);
+    glass.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7);; -fx-background-radius: 20;");
+    glass.setMaxWidth(150);
+    glass.setMinWidth(150);
+    glass.setMaxHeight(250);
+    glass.setMinHeight(250);
+    glass.getChildren().addAll(label);
+
+    menuFlow.getChildren().add(glass);
+
+    return glass;
+
+
+  }
+
+
+  private void shadowS(Node but) {
+
+    DropShadow shadowE = new DropShadow();
+    but.setEffect(shadowE);
+  }
+
+  private void shadowM(Button but) {
+
+    DropShadow shadowE = new DropShadow();
+    but.addEventHandler(MouseEvent.MOUSE_ENTERED, 
+      new EventHandler<MouseEvent>() {
+        @Override public void handle(MouseEvent e) {
+            but.setEffect(shadowE);
+            but.setBackground(new Background(new BackgroundFill(Color.DODGERBLUE,CornerRadii.EMPTY, Insets.EMPTY)));
+        }
+    }); 
+
+    but.addEventHandler(MouseEvent.MOUSE_EXITED, 
+      new EventHandler<MouseEvent>() {
+        @Override public void handle(MouseEvent e) {
+            but.setEffect(null);
+            but.setBackground(new Background(new BackgroundFill(Color.STEELBLUE,CornerRadii.EMPTY, Insets.EMPTY)));
+        }
+    });
+  }
+
+ private FlowPane makeMenuFlow() {
+
+  
     menuFlow = new FlowPane();
     menuFlow.setAlignment(Pos.CENTER);
     menuFlow.setHgap(10.0);
-    Button randomButton = new Button();
+
+ Button randomButton = new Button();
     Button challengeButton = new Button();
     Button firstButton = new Button();
 
@@ -175,7 +269,7 @@ public class DotaFunApp extends Application{
                           "-fx-max-height: 250px;" +
                           "-fx-font-family: cursive; " +
                           "-fx-font-size: 14pt;" +
-                          "-fx-background-image: url('heh.png');" +
+                          "-fx-background-image: url('AppImages/randomImage.png');" +
                           "-fx-border-radius: 20 20 20 20;" +
                           "-fx-background-radius: 20 20 20 20;" +
                           "-fx-background-color: black; " +
@@ -203,6 +297,16 @@ public class DotaFunApp extends Application{
         public void handle(MouseEvent e) {
 
           randomButton.setGraphic(null);
+
+    }});
+
+    randomButton.setOnAction(new EventHandler<ActionEvent> () {
+  
+      @Override
+      public void handle(ActionEvent ae) {
+ 
+        centerStack.getChildren().clear();
+        centerStack.getChildren().add(new RandomMode().getRandomGUI());   
 
     }});
 
@@ -286,85 +390,8 @@ public class DotaFunApp extends Application{
 
     menuFlow.getChildren().addAll(randomButton,challengeButton,firstButton);
 
-
-    centerStack.getChildren().add(menuFlow);
-
-    Region spacer = new Region();
-    menuBox.setVgrow(spacer, Priority.ALWAYS);
-
-    menuBox.getChildren().addAll(menuB,settingsB,spacer,exitB); 
-
-
-    Bounds boundsInScene = arrowBox.localToParent(arrowBox.getBoundsInParent());
-
-  
-
-    AnchorPane.setTopAnchor(centerStack,0.0);
-    AnchorPane.setRightAnchor(centerStack,0.0);
-    AnchorPane.setBottomAnchor(centerStack,0.0);
-    AnchorPane.setLeftAnchor(centerStack, 115.0);
-    AnchorPane.setTopAnchor(hbox,0.0);
-    AnchorPane.setBottomAnchor(hbox,0.0);
-    AnchorPane.setLeftAnchor(hbox,0.0);
-
-    anchPane.getChildren().addAll(centerStack,hbox);
+    return menuFlow;
+ }
     
-   
-    stackMain.getChildren().add(anchPane);
-    Scene mainScene = new Scene(stackMain,800,500);
-    primaryStage.setScene(mainScene);
-
-
-    primaryStage.show();
-
-
-  }
-
-  private StackPane makeChallengeAnim(String name) {
-
-    final Label label = new Label(name);
-    label.setStyle("-fx-text-fill: goldenrod; -fx-font-family: 'Comic Sans MS',serif; -fx-font-size: 30px ; -fx-text-alignment: center");
-    StackPane glass = new StackPane();
-    StackPane.setAlignment(label, Pos.CENTER);
-    glass.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7);; -fx-background-radius: 20;");
-    glass.setMaxWidth(150);
-    glass.setMinWidth(150);
-    glass.setMaxHeight(250);
-    glass.setMinHeight(250);
-    glass.getChildren().addAll(label);
-
-    menuFlow.getChildren().add(glass);
-
-    return glass;
-
-
-  }
-
-
-  private void shadowS(Node but) {
-
-    DropShadow shadowE = new DropShadow();
-    but.setEffect(shadowE);
-  }
-
-  private void shadowM(Button but) {
-
-    DropShadow shadowE = new DropShadow();
-    but.addEventHandler(MouseEvent.MOUSE_ENTERED, 
-      new EventHandler<MouseEvent>() {
-        @Override public void handle(MouseEvent e) {
-            but.setEffect(shadowE);
-            but.setBackground(new Background(new BackgroundFill(Color.DODGERBLUE,CornerRadii.EMPTY, Insets.EMPTY)));
-        }
-    }); 
-
-    but.addEventHandler(MouseEvent.MOUSE_EXITED, 
-      new EventHandler<MouseEvent>() {
-        @Override public void handle(MouseEvent e) {
-            but.setEffect(null);
-            but.setBackground(new Background(new BackgroundFill(Color.STEELBLUE,CornerRadii.EMPTY, Insets.EMPTY)));
-        }
-    });
-  }
     
 }
