@@ -6,15 +6,12 @@ import javafx.scene.paint.*;
 import javafx.scene.control.*;
 import javafx.scene.*;
 import java.io.*;
-import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.layout.*;
 import javafx.event.*;
 import javafx.scene.effect.*;
 import javafx.scene.input.*;
-import javafx.scene.text.*;
 import javafx.animation.*;
 import javafx.util.*;
-import java.util.*;
 
 public class DotaFunApp extends Application{
 
@@ -66,10 +63,10 @@ public class DotaFunApp extends Application{
     }});
 
 
-    menuBox.setMargin(menuB, new Insets(10, 0, 0, 0));
+    VBox.setMargin(menuB, new Insets(10, 0, 0, 0));
     settingsB = new Button("Settings");
     exitB = new Button("Exit");
-    menuBox.setMargin(exitB, new Insets(0, 0, 5,0));
+    VBox.setMargin(exitB, new Insets(0, 0, 5,0));
 
     menuB.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
     settingsB.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -158,7 +155,7 @@ public class DotaFunApp extends Application{
         menuTranslation.setRate(1);
         menuTranslation.play();
 
-          AnchorPane.setLeftAnchor(centerStack, 0.0); 
+        AnchorPane.setLeftAnchor(centerStack, 0.0); 
 
       }
 
@@ -175,13 +172,9 @@ public class DotaFunApp extends Application{
     centerStack.getChildren().add(makeMenuFlow());
 
     Region spacer = new Region();
-    menuBox.setVgrow(spacer, Priority.ALWAYS);
+    VBox.setVgrow(spacer, Priority.ALWAYS);
 
     menuBox.getChildren().addAll(menuB,settingsB,spacer,exitB); 
-
-
-    Bounds boundsInScene = arrowBox.localToParent(arrowBox.getBoundsInParent());
-
   
 
     AnchorPane.setTopAnchor(centerStack,0.0);
@@ -226,11 +219,6 @@ public class DotaFunApp extends Application{
   }
 
 
-  private void shadowS(Node but) {
-
-    DropShadow shadowE = new DropShadow();
-    but.setEffect(shadowE);
-  }
 
   private void shadowM(Button but) {
 

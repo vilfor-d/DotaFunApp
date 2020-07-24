@@ -1,5 +1,4 @@
 import javafx.stage.*;
-import javafx.collections.*;
 import javafx.scene.control.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
@@ -11,6 +10,7 @@ import javafx.scene.shape.*;
 import javafx.scene.paint.*;
 import javafx.scene.text.*;
 import java.util.ArrayList;
+import javafx.scene.input.*;
 
 class SaveManager {
 
@@ -20,7 +20,7 @@ class SaveManager {
  ArrayList<Button> saveloadButtonArray;
  ArrayList<Button> deleteButtonArray;
  
- SaveManager(String typeOfDialog, ObservableList<CheckBox> checkList) {
+ SaveManager(String typeOfDialog, boolean[] checkList) {
 
    if (typeOfDialog == "save") {
 
@@ -33,40 +33,30 @@ class SaveManager {
      makeLoadAction(saveloadButtonArray);
 
    }
- 
-
 
  }
 
- private void makeSave(ArrayList<Button> alButton, ObservableList<CheckBox> saveList) {
+ private void makeSave(ArrayList<Button> alButton, boolean[] saveList) {
 
   for( Button button : alButton) {
 
-    button.setOnAction(new EventHandler<ActionEvent>() {
+
+    button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
       @Override
-      public void handle(ActionEvent event) {
+      public void handle(MouseEvent event) {
+    
+        String [] nameArr = button.getText().split(". ", 2);
+        if(nameArr[1].equals( "Empty")) {
+            inputSaveName(button, saveList);    
+        } else {     	
+            confirmSave(button, saveList);
+        }
+      }});
+    }}
 
-        boolean check = false;
 
-        if(button.getText() != "Empty") {
- 
-        check = confirmSave();
-
-        } 
-
-        if(check) inputSaveName(button);
-
-
-      }
-
-    });
-
-  }   
-
- }
-
- private void inputSaveName(Button but) {
+ private void inputSaveName(Button but, boolean[] checkList) {
 
    Stage nameStage = new Stage();
    nameStage.initModality(Modality.WINDOW_MODAL);
@@ -101,15 +91,12 @@ class SaveManager {
 
    FlowPane fieldPane = new FlowPane();
    fieldPane.setAlignment(Pos.CENTER);
-
    TextField nameField = new TextField();
-   nameField.setFont(new Font("Comic Sans MS",18)); 
+   nameField.setFont(new Font("Cambria",20)); 
    nameField.setPrefColumnCount(14);
    fieldPane.getChildren().add(nameField);
-
-
    nameField.setPromptText("Write save name");
-    
+
    nameField.setOnKeyTyped(event ->{
      int maxCharacters = 16;
      if(nameField.getText().length() > maxCharacters) event.consume();
@@ -118,8 +105,23 @@ class SaveManager {
    acceptNameButton.setOnAction(new EventHandler<ActionEvent>() {
      @Override
      public void handle(ActionEvent ae) {
-
-       but.setText(nameField.getText());
+      
+       String [] nameArr = but.getText().split(". ", 2);
+       File saveRep = new File("./saves/");
+       for (String fileName : saveRep.list()) {
+    	   String[] fileArr = fileName.split(". ",2);
+    	   if (nameArr[0].equals(fileArr[0]))  {
+    		   File delFile = new File("./saves/" + fileName);
+    		   delFile.delete();
+    	   }
+       }
+       but.setText(nameArr[0] + ". " + nameField.getText());
+       try {
+    	   ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./saves/" + but.getText() + ".ser"));
+    	   boolean[] checkBoxArray = checkList;
+    	   outputStream.writeObject(checkBoxArray);
+    	   outputStream.close();
+       } catch (Exception ex) { }
        nameStage.close();
      }
    }); 
@@ -129,8 +131,8 @@ class SaveManager {
    buttonBox.setStyle("-fx-padding: 0 0 3 0");
    buttonBox.setAlignment(Pos.CENTER);
 
-   buttonBox.setHgrow(acceptNameButton, Priority.ALWAYS);
-   buttonBox.setHgrow(cancelNameButton, Priority.ALWAYS);
+   HBox.setHgrow(acceptNameButton, Priority.ALWAYS);
+   HBox.setHgrow(cancelNameButton, Priority.ALWAYS);
 
    acceptNameButton.setMaxWidth(130);
    cancelNameButton.setMaxWidth(130);
@@ -147,10 +149,9 @@ class SaveManager {
 
  }
 
- private boolean confirmSave() {
+ private void confirmSave(Button button, boolean[] checkBox) {
 
    Stage confirmStage = new Stage();
-   boolean result = false;
    confirmStage.initModality(Modality.WINDOW_MODAL);
    confirmStage.initOwner(saveStage);
    confirmStage.initStyle(StageStyle.UNDECORATED);
@@ -174,15 +175,16 @@ class SaveManager {
 
    acceptButton.setStyle("-fx-background-color: darkkhaki;" + "-fx-background-insets: 0 2 2 0;" + "-fx-padding: 8;" + "-fx-font-size:15;" + "-fx-text-alignment: center");
    cancelButton.setStyle("-fx-background-color: darkkhaki;" + "-fx-background-insets: 0 0 2 2;" + "-fx-padding: 8;" + "-fx-font-size:15;" + "-fx-text-alignment: center");
-
-
+   
+   
    acceptButton.setOnAction(new EventHandler<ActionEvent>() {
-  
+	   
      @Override
      public void handle(ActionEvent ae) {
 
-       result = true;
-       confirmStage.close();
+    	 inputSaveName(button, checkBox);
+    	 confirmStage.close();
+       
      }
    });
 
@@ -191,7 +193,6 @@ class SaveManager {
      @Override
      public void handle(ActionEvent ae) {
 
-       result = false;
        confirmStage.close();
      }
    });
@@ -199,8 +200,8 @@ class SaveManager {
    HBox buttonBox = new HBox();
    buttonBox.setAlignment(Pos.CENTER);
 
-   buttonBox.setHgrow(acceptButton, Priority.ALWAYS);
-   buttonBox.setHgrow(cancelButton, Priority.ALWAYS);
+   HBox.setHgrow(acceptButton, Priority.ALWAYS);
+   HBox.setHgrow(cancelButton, Priority.ALWAYS);
 
    acceptButton.setMaxWidth(130);
    cancelButton.setMaxWidth(130);
@@ -214,31 +215,116 @@ class SaveManager {
 
    confirmStage.setScene(mainScene);
    confirmStage.show();
-   
-
-
-   
 
  }  
 
 
  private void makeLoadAction(ArrayList<Button> alButton) {
 
-  for( Button button : alButton) {
+	 for( Button button : alButton) {
 
-    button.setOnAction(new EventHandler<ActionEvent>() {
 
-      @Override
-      public void handle(ActionEvent event) {
+	    button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
-        System.out.print("button work" + "\n");
-      }
+	      @Override	
+	      	public void handle(MouseEvent event) {
+		    
+	    	  String [] nameArr = button.getText().split(". ", 2);
+		       if(nameArr[1].equals( "Empty")) {
 
-    });
+		       } else {     	
+ 
+		    	   confirmLoad(button);
+		       }
+	      }});
+ }}
+ 
+ 
+ 
+ private void confirmLoad(Button button) {
 
-  }   
+	   Stage confirmLoadStage = new Stage();
+	   confirmLoadStage.initModality(Modality.WINDOW_MODAL);
+	   confirmLoadStage.initOwner(saveStage);
+	   confirmLoadStage.initStyle(StageStyle.UNDECORATED);
+	   confirmLoadStage.initStyle(StageStyle.TRANSPARENT);
+	   
+	   BorderPane confirmBorder = new BorderPane();
+	   confirmBorder.setStyle("-fx-background-color:saddlebrown;" +"-fx-border-width:5;" + "-fx-border-radius:16;" + "-fx-font-family: Cambria;" + "-fx-border-color:olive");
+	   Scene mainScene = new Scene (confirmBorder,300,120);
+	   mainScene.setFill(Color.TRANSPARENT);
 
- }
+	   Rectangle rect = new Rectangle(300,120);
+	   rect.setArcHeight(40.0);
+	   rect.setArcWidth(40.0);
+	   confirmBorder.setClip(rect);
+
+	   String[] loadArr = button.getText().split(". ", 2);
+	   Text warningText = new Text("Load save file " + loadArr[0] + "?");
+	   warningText.setStyle("-fx-fill:black;" + "-fx-font-size:22");
+	  
+	   Button acceptLoadButton = new Button("Accept");
+	   Button cancelLoadButton = new Button("Cancel");
+
+	   acceptLoadButton.setStyle("-fx-background-color: darkkhaki;" + "-fx-background-insets: 0 2 2 0;" + "-fx-padding: 8;" + "-fx-font-size:15;" + "-fx-text-alignment: center");
+	   cancelLoadButton.setStyle("-fx-background-color: darkkhaki;" + "-fx-background-insets: 0 0 2 2;" + "-fx-padding: 8;" + "-fx-font-size:15;" + "-fx-text-alignment: center");
+	   
+	   
+	   acceptLoadButton.setOnAction(new EventHandler<ActionEvent>() {
+		   
+	     @Override
+	     public void handle(ActionEvent ae) {
+
+	    	 
+	    	 confirmLoadStage.close(); 
+	     }
+	   });
+
+	   cancelLoadButton.setOnAction(new EventHandler<ActionEvent>() {
+	  
+	     @Override
+	     public void handle(ActionEvent ae) {
+
+	       confirmLoadStage.close();
+	     }
+	   });
+
+	   HBox buttonBox = new HBox();
+	   buttonBox.setAlignment(Pos.CENTER);
+
+	   HBox.setHgrow(acceptLoadButton, Priority.ALWAYS);
+	   HBox.setHgrow(cancelLoadButton, Priority.ALWAYS);
+
+	   acceptLoadButton.setMaxWidth(130);
+	   cancelLoadButton.setMaxWidth(130);
+
+	   buttonBox.getChildren().addAll(acceptLoadButton,cancelLoadButton);
+	  
+
+	   confirmBorder.setBottom(buttonBox);
+	   confirmBorder.setCenter(warningText);
+
+
+	   confirmLoadStage.setScene(mainScene);
+	   confirmLoadStage.show();
+
+	 }  
+/*
+    	      @Override
+    	      public void handle(ActionEvent event) {
+
+    	    try {
+    	    	ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("bin/saves/Save.ser"));
+    			boolean[] list =  (boolean[]) inputStream.readObject();
+    	        inputStream.close();
+    	    } catch (Exception ex) {ex.printStackTrace();}
+
+    	      }
+
+    	    });
+
+    	  }   
+*/
 
  private void makeGUI(String mode) {
 
@@ -314,13 +400,13 @@ class SaveManager {
    HBox topHBOX = new HBox();
 
    Region hBoxRegion = new Region();
-   topHBOX.setHgrow(hBoxRegion,Priority.ALWAYS);
+   HBox.setHgrow(hBoxRegion,Priority.ALWAYS);
 
    Region hBoxRegion2 = new Region();
-   topHBOX.setHgrow(hBoxRegion2,Priority.ALWAYS);
+   HBox.setHgrow(hBoxRegion2,Priority.ALWAYS);
 
-   topHBOX.setMargin(closeButton, new Insets(5, 0, 0, 0));
-   topHBOX.setMargin(topText, new Insets(5, 0, 0, 40));
+   HBox.setMargin(closeButton, new Insets(5, 0, 0, 0));
+   HBox.setMargin(topText, new Insets(5, 0, 0, 40));
    topHBOX.getChildren().addAll(hBoxRegion2,topText,hBoxRegion,closeButton);
 
 
@@ -330,21 +416,41 @@ class SaveManager {
    saveloadButtonArray = new ArrayList<Button>();
    deleteButtonArray = new ArrayList<Button>();
 
+   File checkFile = new File ("./saves" );
    for (int x = 0; x<7; x++) {
-
-
+	 boolean existFile = false;
      GridPane gridPane = new GridPane();
      gridPane.setAlignment(Pos.CENTER);
      gridPane.getColumnConstraints().add(new ColumnConstraints(200));
-     Button fileButton = new Button("Empty");
+     
+     
+	 Button fileButton = null;
+     for(String checkName : checkFile.list()) {
+    	 String[] checkArr = checkName.split(". " ,2);
+    	 
+    	 if ( checkArr[0].equals(Integer.toString(x+1))) {
+       	    String[] arrForButton = checkName.split(".ser$");
+    		fileButton = new Button(arrForButton[0]);
+    		existFile = true;
+    	 }
+     }
+     if(existFile==false) fileButton = new Button(x+1 + ". " + "Empty");
      Button deleteButton = new Button();
+     deleteButton.setOnAction(new EventHandler<ActionEvent>() {
+		
+		@Override
+		public void handle(ActionEvent event) {
+			
+			confirmDelete(deleteButton);			
+		}
+	 });
      fileButton.setMaxWidth(Double.MAX_VALUE);
      fileButton.setMaxHeight(Double.MAX_VALUE);
      fileButton.setMinHeight(39);
-     gridPane.setMargin(fileButton,new Insets(0,0,0,0));
+     GridPane.setMargin(fileButton,new Insets(0,0,0,0));
      deleteButton.setMinHeight(39);
-     gridPane.setHgrow(fileButton, Priority.ALWAYS);
-     gridPane.setVgrow(fileButton, Priority.ALWAYS);
+     GridPane.setHgrow(fileButton, Priority.ALWAYS);
+     GridPane.setVgrow(fileButton, Priority.ALWAYS);
 
      fileButton.setStyle("-fx-font-family: Cambria;" + "-fx-font-size: 17;" + "-fx-background-color:cornflowerblue;" + "-fx-background-radius: 20 0 0 20;" + "-fx-text-fill:black;" + "-fx-background-insets:0");
      fileButton.setAlignment(Pos.BASELINE_LEFT);
@@ -382,4 +488,84 @@ class SaveManager {
    saveStage.sizeToScene();
    saveStage.show();
  } 
+ 
+ private void confirmDelete(Button button) {
+
+	   Stage deleteStage = new Stage();
+	   deleteStage.initModality(Modality.WINDOW_MODAL);
+	   deleteStage.initOwner(saveStage);
+	   deleteStage.initStyle(StageStyle.UNDECORATED);
+	   deleteStage.initStyle(StageStyle.TRANSPARENT);
+	   
+	   BorderPane confirmBorder = new BorderPane();
+	   confirmBorder.setStyle("-fx-background-color:saddlebrown;" +"-fx-border-width:5;" + "-fx-border-radius:16;" + "-fx-font-family: Cambria;" + "-fx-border-color:olive");
+	   Scene mainScene = new Scene (confirmBorder,300,120);
+	   mainScene.setFill(Color.TRANSPARENT);
+
+	   Rectangle rect = new Rectangle(300,120);
+	   rect.setArcHeight(40.0);
+	   rect.setArcWidth(40.0);
+	   confirmBorder.setClip(rect);
+
+		int buttonIndex = deleteButtonArray.indexOf(button);
+	   String[] deleteArr = saveloadButtonArray.get(buttonIndex).getText().split(". ", 2);
+	   Text warningText = new Text("Delete save file " +  deleteArr[0] + "?");
+	   warningText.setStyle("-fx-fill:black;" + "-fx-font-size:22");
+	  
+	   Button acceptButton = new Button("Accept");
+	   Button cancelButton = new Button("Cancel");
+
+	   acceptButton.setStyle("-fx-background-color: darkkhaki;" + "-fx-background-insets: 0 2 2 0;" + "-fx-padding: 8;" + "-fx-font-size:15;" + "-fx-text-alignment: center");
+	   cancelButton.setStyle("-fx-background-color: darkkhaki;" + "-fx-background-insets: 0 0 2 2;" + "-fx-padding: 8;" + "-fx-font-size:15;" + "-fx-text-alignment: center");
+	   
+	   
+	   acceptButton.setOnAction(new EventHandler<ActionEvent>() {
+		   
+	     @Override
+	     public void handle(ActionEvent ae) {
+
+	    	 removeSave(button);
+	    	 deleteStage.close();
+	     }
+	   });
+
+	   cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+	  
+	     @Override
+	     public void handle(ActionEvent ae) {
+
+	    	 deleteStage.close();
+	     }
+	   });
+
+	   HBox buttonBox = new HBox();
+	   buttonBox.setAlignment(Pos.CENTER);
+
+	   HBox.setHgrow(acceptButton, Priority.ALWAYS);
+	   HBox.setHgrow(cancelButton, Priority.ALWAYS);
+
+	   acceptButton.setMaxWidth(130);
+	   cancelButton.setMaxWidth(130);
+
+	   buttonBox.getChildren().addAll(acceptButton,cancelButton);
+	  
+
+	   confirmBorder.setBottom(buttonBox);
+	   confirmBorder.setCenter(warningText);
+
+
+	   deleteStage.setScene(mainScene);
+	   deleteStage.show();
+
+	 }  
+ 
+ 	private void removeSave(Button deleteButton) {
+ 		
+		int delButtonIndex = deleteButtonArray.indexOf(deleteButton);
+		String[] numberInName = saveloadButtonArray.get(delButtonIndex).getText().split(". ", 2);
+		File removeFile = new File ("./saves/" +  saveloadButtonArray.get(delButtonIndex).getText() + ".ser");
+		removeFile.delete();
+		saveloadButtonArray.get(delButtonIndex).setText(numberInName[0] + ". " + "Empty");
+		
+ 	}
 }

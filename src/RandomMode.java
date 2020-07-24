@@ -1,14 +1,10 @@
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.text.*;
+//import java.util.Arrays;
 import javafx.collections.*;
-import java.util.ArrayList;
-import javafx.beans.value.*;
 import javafx.event.*;
 import javafx.geometry.*;
-import javafx.application.*;
 import javafx.scene.effect.*;
-import javafx.scene.paint.*;
 import javafx.scene.input.*;
 
 class RandomMode { 
@@ -39,24 +35,35 @@ class RandomMode {
     AnchorPane rightBox = new AnchorPane();
     
     saveButton = new Button("Save");
-
     saveButton.setOnAction(new EventHandler<ActionEvent>() {
 
       @Override
       public void handle(ActionEvent event) {
     
-        SaveManager saveDialog = new SaveManager("save", heroObs);
+  		boolean[] checkBool = new  boolean[heroObs.size()];
+  	
+        for(int x = 0; x<heroObs.size(); x++) {
+        	checkBool[x] = heroObs.get(x).isSelected();
+        }
+    	  
+        @SuppressWarnings("unused")
+		SaveManager saveDialog = new SaveManager("save", checkBool);
       
     }});
 
     loadButton = new Button("Load");
-
     loadButton.setOnAction(new EventHandler<ActionEvent>() {
 
       @Override
       public void handle(ActionEvent event) {
-    
-        SaveManager saveDialog = new SaveManager("load", heroObs);
+        boolean[] checkBool = new  boolean[heroObs.size()];
+        
+           for(int x = 0; x<heroObs.size(); x++) {
+          	checkBool[x] = heroObs.get(x).isSelected();  
+        }
+    	  
+		@SuppressWarnings("unused")
+		SaveManager saveDialog = new SaveManager("load", checkBool );
       
     }});
 
