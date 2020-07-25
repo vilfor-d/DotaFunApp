@@ -47,7 +47,7 @@ class RandomMode {
         }
     	  
         @SuppressWarnings("unused")
-		SaveManager saveDialog = new SaveManager("save", checkBool);
+		SaveManager saveDialog = new SaveManager("save", checkBool, heroObs);
       
     }});
 
@@ -63,7 +63,7 @@ class RandomMode {
         }
     	  
 		@SuppressWarnings("unused")
-		SaveManager saveDialog = new SaveManager("load", checkBool );
+		SaveManager saveDialog = new SaveManager("load", checkBool, heroObs );
       
     }});
 

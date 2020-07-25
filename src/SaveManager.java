@@ -11,6 +11,7 @@ import javafx.scene.paint.*;
 import javafx.scene.text.*;
 import java.util.ArrayList;
 import javafx.scene.input.*;
+import javafx.collections.*;
 
 class SaveManager {
 
@@ -20,7 +21,7 @@ class SaveManager {
  ArrayList<Button> saveloadButtonArray;
  ArrayList<Button> deleteButtonArray;
  
- SaveManager(String typeOfDialog, boolean[] checkList) {
+ SaveManager(String typeOfDialog, boolean[] checkList, ObservableList<CheckBox> checkBoxList) {
 
    if (typeOfDialog == "save") {
 
@@ -30,10 +31,8 @@ class SaveManager {
    } else {
 
      makeGUI("load");
-     makeLoadAction(saveloadButtonArray);
-
+     makeLoadAction(saveloadButtonArray , checkBoxList);
    }
-
  }
 
  private void makeSave(ArrayList<Button> alButton, boolean[] saveList) {
@@ -107,7 +106,7 @@ class SaveManager {
      public void handle(ActionEvent ae) {
       
        String [] nameArr = but.getText().split(". ", 2);
-       File saveRep = new File("./saves/");
+       File saveRep = new File("./saves");
        for (String fileName : saveRep.list()) {
     	   String[] fileArr = fileName.split(". ",2);
     	   if (nameArr[0].equals(fileArr[0]))  {
@@ -115,13 +114,13 @@ class SaveManager {
     		   delFile.delete();
     	   }
        }
-       but.setText(nameArr[0] + ". " + nameField.getText());
+       but.setText(nameArr[0] + ". " + nameField.getText().replaceAll("[\\?\\:\\<\\>\\|\\*\"\\/\\\\]",""));
        try {
-    	   ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./saves/" + but.getText() + ".ser"));
+    	   ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./saves/" + but.getText().replaceAll("[\\?\\:\\<\\>\\|\\*\"\\/\\\\]","") + ".ser"));
     	   boolean[] checkBoxArray = checkList;
     	   outputStream.writeObject(checkBoxArray);
     	   outputStream.close();
-       } catch (Exception ex) { }
+       } catch (Exception ex) { ex.printStackTrace(); }
        nameStage.close();
      }
    }); 
@@ -145,8 +144,6 @@ class SaveManager {
 
    nameStage.setScene(nameScene);
    nameStage.show();
-
-
  }
 
  private void confirmSave(Button button, boolean[] checkBox) {
@@ -184,7 +181,6 @@ class SaveManager {
 
     	 inputSaveName(button, checkBox);
     	 confirmStage.close();
-       
      }
    });
 
@@ -215,11 +211,10 @@ class SaveManager {
 
    confirmStage.setScene(mainScene);
    confirmStage.show();
-
  }  
 
 
- private void makeLoadAction(ArrayList<Button> alButton) {
+ private void makeLoadAction(ArrayList<Button> alButton, ObservableList<CheckBox> checkBoxLoad) {
 
 	 for( Button button : alButton) {
 
@@ -234,14 +229,14 @@ class SaveManager {
 
 		       } else {     	
  
-		    	   confirmLoad(button);
+		    	   confirmLoad(button , checkBoxLoad);
 		       }
 	      }});
  }}
  
  
  
- private void confirmLoad(Button button) {
+ private void confirmLoad(Button button, ObservableList<CheckBox> checkBoxForLoad) {
 
 	   Stage confirmLoadStage = new Stage();
 	   confirmLoadStage.initModality(Modality.WINDOW_MODAL);
@@ -274,8 +269,16 @@ class SaveManager {
 		   
 	     @Override
 	     public void handle(ActionEvent ae) {
-
-	    	 
+	    		 
+	    	boolean[] list = null;
+	   	    try {
+	   	    	ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("./saves/" + button.getText() + ".ser"));
+	   			list =  (boolean[]) inputStream.readObject();
+	   	        inputStream.close();
+	   	    } catch (Exception ex) {ex.printStackTrace();}
+	   	     for(int count = 0; count<checkBoxForLoad.size();count++) {
+	   	    	 checkBoxForLoad.get(count).setSelected(list[count]);
+	   	     }
 	    	 confirmLoadStage.close(); 
 	     }
 	   });
@@ -294,37 +297,16 @@ class SaveManager {
 
 	   HBox.setHgrow(acceptLoadButton, Priority.ALWAYS);
 	   HBox.setHgrow(cancelLoadButton, Priority.ALWAYS);
-
 	   acceptLoadButton.setMaxWidth(130);
 	   cancelLoadButton.setMaxWidth(130);
-
 	   buttonBox.getChildren().addAll(acceptLoadButton,cancelLoadButton);
 	  
-
 	   confirmBorder.setBottom(buttonBox);
 	   confirmBorder.setCenter(warningText);
 
-
 	   confirmLoadStage.setScene(mainScene);
 	   confirmLoadStage.show();
-
 	 }  
-/*
-    	      @Override
-    	      public void handle(ActionEvent event) {
-
-    	    try {
-    	    	ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("bin/saves/Save.ser"));
-    			boolean[] list =  (boolean[]) inputStream.readObject();
-    	        inputStream.close();
-    	    } catch (Exception ex) {ex.printStackTrace();}
-
-    	      }
-
-    	    });
-
-    	  }   
-*/
 
  private void makeGUI(String mode) {
 
@@ -355,7 +337,6 @@ class SaveManager {
      public void handle(ActionEvent ev) {
 
    saveStage.close();
-
    }});
 
    InputStream iconStream = getClass().getResourceAsStream("AppImages/cross.png");
@@ -461,7 +442,6 @@ class SaveManager {
      saveloadButtonArray.add(fileButton);
      deleteButtonArray.add(deleteButton);
      centerVBOX.getChildren().add(gridPane);
-
    }
  
    
@@ -556,7 +536,6 @@ class SaveManager {
 
 	   deleteStage.setScene(mainScene);
 	   deleteStage.show();
-
 	 }  
  
  	private void removeSave(Button deleteButton) {
@@ -566,6 +545,5 @@ class SaveManager {
 		File removeFile = new File ("./saves/" +  saveloadButtonArray.get(delButtonIndex).getText() + ".ser");
 		removeFile.delete();
 		saveloadButtonArray.get(delButtonIndex).setText(numberInName[0] + ". " + "Empty");
-		
  	}
 }
