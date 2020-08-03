@@ -1,0 +1,23 @@
+
+
+.list-view {
+
+-fx-max-width: 170px;
+-fx-border-width: 0 0 2 2;
+-fx-border-color: navy;
+}
+
+.list-view .list-cell {
+-fx-background-color: cornflowerblue;
+
+}
+
+.check-box .box {
+
+  -fx-background-color: white;
+}
+
+.list-view, .split-pane {
+ -fx-background-insets: 0; -fx-padding: 0; 
+}
+
