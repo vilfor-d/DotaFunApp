@@ -106,17 +106,17 @@ class SaveManager {
      public void handle(ActionEvent ae) {
       
        String [] nameArr = but.getText().split(". ", 2);
-       File saveRep = new File("./saves");
+       File saveRep = new File("./bin/saves");
        for (String fileName : saveRep.list()) {
     	   String[] fileArr = fileName.split(". ",2);
     	   if (nameArr[0].equals(fileArr[0]))  {
-    		   File delFile = new File("./saves/" + fileName);
+    		   File delFile = new File("./bin/saves/" + fileName);
     		   delFile.delete();
     	   }
        }
        but.setText(nameArr[0] + ". " + nameField.getText().replaceAll("[\\?\\:\\<\\>\\|\\*\"\\/\\\\]",""));
        try {
-    	   ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./saves/" + but.getText().replaceAll("[\\?\\:\\<\\>\\|\\*\"\\/\\\\]","") + ".ser"));
+    	   ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./bin/saves/" + but.getText().replaceAll("[\\?\\:\\<\\>\\|\\*\"\\/\\\\]","") + ".ser"));
     	   boolean[] checkBoxArray = checkList;
     	   outputStream.writeObject(checkBoxArray);
     	   outputStream.close();
@@ -272,7 +272,7 @@ class SaveManager {
 	    		 
 	    	boolean[] list = null;
 	   	    try {
-	   	    	ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("./saves/" + button.getText() + ".ser"));
+	   	    	ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("./bin/saves/" + button.getText() + ".ser"));
 	   			list =  (boolean[]) inputStream.readObject();
 	   	        inputStream.close();
 	   	    } catch (Exception ex) {ex.printStackTrace();}
@@ -397,7 +397,7 @@ class SaveManager {
    saveloadButtonArray = new ArrayList<Button>();
    deleteButtonArray = new ArrayList<Button>();
 
-   File checkFile = new File ("./saves" );
+   File checkFile = new File ("./bin/saves" );
    for (int x = 0; x<7; x++) {
 	 boolean existFile = false;
      GridPane gridPane = new GridPane();
@@ -542,7 +542,7 @@ class SaveManager {
  		
 		int delButtonIndex = deleteButtonArray.indexOf(deleteButton);
 		String[] numberInName = saveloadButtonArray.get(delButtonIndex).getText().split(". ", 2);
-		File removeFile = new File ("./saves/" +  saveloadButtonArray.get(delButtonIndex).getText() + ".ser");
+		File removeFile = new File ("./bin/saves/" +  saveloadButtonArray.get(delButtonIndex).getText() + ".ser");
 		removeFile.delete();
 		saveloadButtonArray.get(delButtonIndex).setText(numberInName[0] + ". " + "Empty");
  	}

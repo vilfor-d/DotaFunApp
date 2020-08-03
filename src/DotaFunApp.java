@@ -42,7 +42,7 @@ public class DotaFunApp extends Application{
     StackPane stackMain = new StackPane();
     centerStack = new StackPane();
     AnchorPane anchPane = new AnchorPane();
-    anchPane.setStyle( "-fx-background-color: lightseagreen;");
+    anchPane.setStyle( "-fx-background-color: darkcyan;");
 
   
     VBox menuBox = new VBox();
@@ -89,10 +89,10 @@ public class DotaFunApp extends Application{
                           "-fx-max-width: 15px; " +
                           "-fx-max-height: 100px;" +
                           "-fx-background-color: steelblue;" +
-                          "-fx-border-color: royalblue;" +
+                          "-fx-border-color: rgb(0,100,109);" +
                           "-fx-border-width: 2 2 2 0;" +
-                          "-fx-border-radius: 0 10 10 0;" +
-                          "-fx-background-radius: 0 10 10 0" 
+                          "-fx-border-radius: 0 12 12 0;" +
+                          "-fx-background-radius: 0 14 14 0" 
                      );
 
 
@@ -112,10 +112,10 @@ public class DotaFunApp extends Application{
                           "-fx-max-width: 15px; " +
                           "-fx-max-height: 100px;" +
                           "-fx-background-color: steelblue;" +
-                          "-fx-border-color: royalblue;" +
+                          "-fx-border-color: rgb(0,100,109);" +
                           "-fx-border-width: 2 2 2 0;" +
-                          "-fx-border-radius: 0 10 10 0;" +
-                          "-fx-background-radius: 0 10 10 0;" +
+                          "-fx-border-radius: 0 12 12 0;" +
+                          "-fx-background-radius: 0 14 14 0;" +
                           "-fx-effect: dropshadow(gaussian, #414040, 6, 0, 3, 0)");
 
         }
@@ -130,10 +130,10 @@ public class DotaFunApp extends Application{
                           "-fx-max-width: 15px; " +
                           "-fx-max-height: 100px;" +
                           "-fx-background-color: steelblue;" +
-                          "-fx-border-color: royalblue;" +
+                          "-fx-border-color: rgb(0,100,109);" +
                           "-fx-border-width: 2 2 2 0;" +
-                          "-fx-border-radius: 0 10 10 0;" +
-                          "-fx-background-radius: 0 10 10 0");
+                          "-fx-border-radius: 0 12 12 0;" +
+                          "-fx-background-radius: 0 14 14 0");
         }
     });
 
@@ -189,7 +189,7 @@ public class DotaFunApp extends Application{
     
    
     stackMain.getChildren().add(anchPane);
-    Scene mainScene = new Scene(stackMain,800,500);
+    Scene mainScene = new Scene(stackMain,900,600);
     primaryStage.setScene(mainScene);
 
 
