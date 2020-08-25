@@ -21,6 +21,7 @@ class RandomMode {
     Button saveButton;
     Button loadButton;
     StackPane centerStack;
+    TranslateTransition heroAnimation;
 
   String[] heroesNames = {"Abbadon","Alchemist","Ancient Apparition","Anti-Mage","Arc Warden","Axe","Bane","Batrider","Beastmaster","Bloodseeker","Bounty Hunter","Brewmaster","Bristleback","Broodmother","Centaur Warrunner","Chaos Knight","Chen","Clinkz","Clockwerk","Crystal Maiden","Dark Seer","Dark Willow","Dazzle","Death Prophet","Disruptor","Doom","Dragon Knight","Drow Ranger","Earth Spirit","Earthshaker","Elder Titan","Ember Spirit","Enchantress","Enigma","Faceless Void","Grimstroke","Gyrocopter","Huskar","Invoker","Io","Jakiro","Juggernaut","Keeper of the Light","Kunkka","Legion Commander","Leshrac","Lich","Lifestealer","Lina","Lion","Lone Druid","Luna","Lycan","Magnus","Mars","Medusa","Meepo","Mirana","Monkey King","Morphling","Naga Siren","Nature's Prophet","Necrophos","Night Stalker","Nyx Assassin","Ogre Magi","Omniknight","Oracle","Outworld Devourer","Pangolier","Phantom Assassin","Phantom Lancer","Phoenix","Puck","Pudge","Pugna","Queen of Pain","Razor","Riki","Rubick","Sand King","Shadow Demon","Shadow Fiend","Shadow Shaman","Silencer","Skywrath Mage","Slardar","Slark","Snapfire","Sniper","Spectre","Spirit Breaker","Storm Spirit","Sven","Techies","Templar Assassin","Terrorblade","Tidehunter","Timbersaw","Tinker","Tiny","Treant Protector","Troll Warlord","Tusk","Underlord","Undying","Ursa","Vengeful Spirit","Venomancer","Viper","Visage","Void Spirit","Warlock","Weaver","Windranger","Winter Wyvern","Witch Doctor","Wraith King","Zeus"};
 
@@ -29,7 +30,7 @@ class RandomMode {
   public StackPane getRandomGUI() {
 
     StackPane randomGUI = new StackPane();
-    randomGUI.setStyle(" -fx-background-color: darkcyan");
+    randomGUI.setStyle(" -fx-background-color: rgb(92, 76, 141)");
     BorderPane borderPane = new BorderPane();
     randomGUI.getChildren().add(borderPane);
 
@@ -165,18 +166,30 @@ class RandomMode {
     
     //Панель анимации
     BorderPane animPane = new BorderPane();
+    HBox heroSpin = new HBox();
+    heroAnimation = new TranslateTransition();
     Image aba = new Image("hero images/Abaddon_icon.png",150,84,false,true);
     Image alch = new Image("hero images/Alchemist_icon.png",150,84,false,true);
     Image zeus = new Image("hero images/Zeus_icon.png",150,84,false,true);
+    Image anti = new Image("hero images/Anti-Mage_icon.png",150,84,false,true);
     Image split = new Image("AppImages/split.png");
     ImageView spl = new ImageView(split);
     ImageView spl2 = new ImageView(split);
+    ImageView spl3 = new ImageView(split);
     ImageView tesa1 = new ImageView(alch);
     ImageView tesa2 = new ImageView(aba);
     ImageView tesa3 = new ImageView(zeus);
-    HBox heroSpin = new HBox();
+    ImageView tesa4 = new ImageView(anti);
+    heroSpin.setStyle("-fx-max-width:594;" + "-fx-min-width:594");
     heroSpin.setAlignment(Pos.CENTER);
-    heroSpin.getChildren().addAll(tesa3,spl,tesa2,spl2,tesa1);
+    Rectangle spinRect = new Rectangle(594,84);
+    heroSpin.setClip(spinRect);
+    
+    heroAnimation.setNode(tesa1);
+    heroAnimation.setFromX(50);
+    heroAnimation.setToX(-100);
+    heroAnimation.play();
+    heroSpin.getChildren().addAll(tesa3,spl,tesa2,spl2,tesa1,spl3,tesa4);
     
     Image bottomImageSpin = new Image("AppImages/bottomSpin.png");
     Image topImageSpin = new Image("AppImages/topSpin.png");

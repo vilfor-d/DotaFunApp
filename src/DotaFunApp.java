@@ -42,7 +42,7 @@ public class DotaFunApp extends Application{
     StackPane stackMain = new StackPane();
     centerStack = new StackPane();
     AnchorPane anchPane = new AnchorPane();
-    anchPane.setStyle( "-fx-background-color: darkcyan;");
+    anchPane.setStyle( "-fx-background-color: rgb(92, 76, 141);");
 
   
     VBox menuBox = new VBox();
@@ -89,7 +89,7 @@ public class DotaFunApp extends Application{
                           "-fx-max-width: 15px; " +
                           "-fx-max-height: 100px;" +
                           "-fx-background-color: steelblue;" +
-                          "-fx-border-color: rgb(0,100,109);" +
+                          "-fx-border-color: rgb(59, 0, 95);" +
                           "-fx-border-width: 2 2 2 0;" +
                           "-fx-border-radius: 0 12 12 0;" +
                           "-fx-background-radius: 0 14 14 0" 
@@ -112,7 +112,7 @@ public class DotaFunApp extends Application{
                           "-fx-max-width: 15px; " +
                           "-fx-max-height: 100px;" +
                           "-fx-background-color: steelblue;" +
-                          "-fx-border-color: rgb(0,100,109);" +
+                          "-fx-border-color: rgb(59, 0, 95);" +
                           "-fx-border-width: 2 2 2 0;" +
                           "-fx-border-radius: 0 12 12 0;" +
                           "-fx-background-radius: 0 14 14 0;" +
@@ -130,7 +130,7 @@ public class DotaFunApp extends Application{
                           "-fx-max-width: 15px; " +
                           "-fx-max-height: 100px;" +
                           "-fx-background-color: steelblue;" +
-                          "-fx-border-color: rgb(0,100,109);" +
+                          "-fx-border-color: rgb(59, 0, 95);" +
                           "-fx-border-width: 2 2 2 0;" +
                           "-fx-border-radius: 0 12 12 0;" +
                           "-fx-background-radius: 0 14 14 0");
