@@ -1,4 +1,5 @@
 import javafx.scene.layout.*;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
@@ -10,20 +11,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.animation.*;
+import java.io.*;
+import java.util.*;
 
 class RandomMode { 
 	
-	static int x = 0;
-
     ListView<CheckBox> heroListView;
-
+    ObservableList<CheckBox> heroObs;
+	HBox heroSpin;
     Label label;
     Button saveButton;
     Button loadButton;
     StackPane centerStack;
-    TranslateTransition heroAnimation;
-
-  String[] heroesNames = {"Abbadon","Alchemist","Ancient Apparition","Anti-Mage","Arc Warden","Axe","Bane","Batrider","Beastmaster","Bloodseeker","Bounty Hunter","Brewmaster","Bristleback","Broodmother","Centaur Warrunner","Chaos Knight","Chen","Clinkz","Clockwerk","Crystal Maiden","Dark Seer","Dark Willow","Dazzle","Death Prophet","Disruptor","Doom","Dragon Knight","Drow Ranger","Earth Spirit","Earthshaker","Elder Titan","Ember Spirit","Enchantress","Enigma","Faceless Void","Grimstroke","Gyrocopter","Huskar","Invoker","Io","Jakiro","Juggernaut","Keeper of the Light","Kunkka","Legion Commander","Leshrac","Lich","Lifestealer","Lina","Lion","Lone Druid","Luna","Lycan","Magnus","Mars","Medusa","Meepo","Mirana","Monkey King","Morphling","Naga Siren","Nature's Prophet","Necrophos","Night Stalker","Nyx Assassin","Ogre Magi","Omniknight","Oracle","Outworld Devourer","Pangolier","Phantom Assassin","Phantom Lancer","Phoenix","Puck","Pudge","Pugna","Queen of Pain","Razor","Riki","Rubick","Sand King","Shadow Demon","Shadow Fiend","Shadow Shaman","Silencer","Skywrath Mage","Slardar","Slark","Snapfire","Sniper","Spectre","Spirit Breaker","Storm Spirit","Sven","Techies","Templar Assassin","Terrorblade","Tidehunter","Timbersaw","Tinker","Tiny","Treant Protector","Troll Warlord","Tusk","Underlord","Undying","Ursa","Vengeful Spirit","Venomancer","Viper","Visage","Void Spirit","Warlock","Weaver","Windranger","Winter Wyvern","Witch Doctor","Wraith King","Zeus"};
+    String[] heroesNames = {"Abbadon","Alchemist","Ancient Apparition","Anti-Mage","Arc Warden","Axe","Bane","Batrider","Beastmaster","Bloodseeker","Bounty Hunter","Brewmaster","Bristleback","Broodmother","Centaur Warrunner","Chaos Knight","Chen","Clinkz","Clockwerk","Crystal Maiden","Dark Seer","Dark Willow","Dazzle","Death Prophet","Disruptor","Doom","Dragon Knight","Drow Ranger","Earth Spirit","Earthshaker","Elder Titan","Ember Spirit","Enchantress","Enigma","Faceless Void","Grimstroke","Gyrocopter","Huskar","Invoker","Io","Jakiro","Juggernaut","Keeper of the Light","Kunkka","Legion Commander","Leshrac","Lich","Lifestealer","Lina","Lion","Lone Druid","Luna","Lycan","Magnus","Mars","Medusa","Meepo","Mirana","Monkey King","Morphling","Naga Siren","Nature's Prophet","Necrophos","Night Stalker","Nyx Assassin","Ogre Magi","Omniknight","Oracle","Outworld Devourer","Pangolier","Phantom Assassin","Phantom Lancer","Phoenix","Puck","Pudge","Pugna","Queen of Pain","Razor","Riki","Rubick","Sand King","Shadow Demon","Shadow Fiend","Shadow Shaman","Silencer","Skywrath Mage","Slardar","Slark","Snapfire","Sniper","Spectre","Spirit Breaker","Storm Spirit","Sven","Techies","Templar Assassin","Terrorblade","Tidehunter","Timbersaw","Tinker","Tiny","Treant Protector","Troll Warlord","Tusk","Underlord","Undying","Ursa","Vengeful Spirit","Venomancer","Viper","Visage","Void Spirit","Warlock","Weaver","Windranger","Winter Wyvern","Witch Doctor","Wraith King","Zeus"};
 
   
 
@@ -34,7 +34,7 @@ class RandomMode {
     BorderPane borderPane = new BorderPane();
     randomGUI.getChildren().add(borderPane);
 
-    ObservableList<CheckBox> heroObs = FXCollections.observableArrayList();
+    heroObs = FXCollections.observableArrayList();
     heroListView = new ListView<CheckBox>(heroObs);
 
     VBox listBoxPane = new VBox();
@@ -70,9 +70,9 @@ class RandomMode {
           	checkBool[x] = heroObs.get(x).isSelected();  
         }
     	  
-		@SuppressWarnings("unused")
 		SaveManager saveDialog = new SaveManager("load", checkBool, heroObs );
-      
+		saveDialog.setObserverList(heroObs);
+		saveDialog.setHeroSpinForLoad(heroSpin); 
     }});
 
     saveButton.setStyle("-fx-background-insets: 0;" +
@@ -97,7 +97,6 @@ class RandomMode {
     shadowM(loadButton);
     shadowM(saveButton);
 
-
     HBox listButtonPane = new HBox();
     listButtonPane.setMinHeight(50);
     listButtonPane.setMaxHeight(100);
@@ -105,6 +104,7 @@ class RandomMode {
     listButtonPane.getChildren().addAll(saveButton,loadButton);
 
     CheckBox allHeroesCheck = new CheckBox("All Heroes");
+    allHeroesCheck.setSelected(true);
     CheckBox clearHeroesCheck = new CheckBox("Clear All");
     allHeroesCheck.setStyle("-fx-text-fill: black;" + "-fx-font-size: 13");
     allHeroesCheck.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -115,17 +115,19 @@ class RandomMode {
 
       for (CheckBox box : heroObs) {
 
-        if(x>1) {
-          
+        if(x>1) {    
           box.setSelected(true);
         }
 
         if(x==1) {
-          
           box.setSelected(false);
         }
         x++;
-    }}});
+    }
+	    ImageView[] heroImageActionArr = baseHeroIcons(heroObs);
+	    heroSpin.getChildren().clear();
+	    heroSpin.getChildren().addAll(heroImageActionArr[0],heroImageActionArr[1],heroImageActionArr[2],heroImageActionArr[3]);
+	    }});
 
     clearHeroesCheck.setStyle("-fx-text-fill: black;" + "-fx-font-size: 13");
 
@@ -138,11 +140,12 @@ class RandomMode {
       for (CheckBox box : heroObs) {
 
         if(x!=1) {
-          
           box.setSelected(false);
         }
       x++;
-    }}});
+    }
+	    heroSpin.getChildren().clear();
+      }});
 
     heroListView.getStylesheets().add(getClass().getResource("css/heroListStyle.css").toExternalForm());
 
@@ -152,11 +155,29 @@ class RandomMode {
     for(String hero : heroesNames) {
 
       CheckBox heroCheck = new CheckBox(hero);
+      heroCheck.setSelected(true);
       heroCheck.setOnMousePressed(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent me) {
       clearHeroesCheck.setSelected(false);
       }});
+      heroCheck.setOnAction((event) -> {
+
+    		 if(!heroCheck.isSelected()) {
+    			 allHeroesCheck.setSelected(false);
+    		 }
+    		    ImageView[] heroImageActionArr = baseHeroIcons(heroObs);
+    		    heroSpin.getChildren().clear();
+    		    if(heroImageActionArr.length < 4) {
+ 
+    		    	for(ImageView tempImageView : heroImageActionArr) {
+        		    heroSpin.getChildren().add(tempImageView);
+    		    	}
+    		    	
+    		    } else {
+    		    heroSpin.getChildren().addAll(heroImageActionArr[0],heroImageActionArr[1],heroImageActionArr[2],heroImageActionArr[3]);
+    		    }
+      });
       heroCheck.setStyle("-fx-text-fill: black;" + "-fx-font-size: 13");
       heroObs.add(heroCheck);
     }
@@ -166,30 +187,17 @@ class RandomMode {
     
     //Панель анимации
     BorderPane animPane = new BorderPane();
-    HBox heroSpin = new HBox();
-    heroAnimation = new TranslateTransition();
-    Image aba = new Image("hero images/Abaddon_icon.png",150,84,false,true);
-    Image alch = new Image("hero images/Alchemist_icon.png",150,84,false,true);
-    Image zeus = new Image("hero images/Zeus_icon.png",150,84,false,true);
-    Image anti = new Image("hero images/Anti-Mage_icon.png",150,84,false,true);
-    Image split = new Image("AppImages/split.png");
-    ImageView spl = new ImageView(split);
-    ImageView spl2 = new ImageView(split);
-    ImageView spl3 = new ImageView(split);
-    ImageView tesa1 = new ImageView(alch);
-    ImageView tesa2 = new ImageView(aba);
-    ImageView tesa3 = new ImageView(zeus);
-    ImageView tesa4 = new ImageView(anti);
-    heroSpin.setStyle("-fx-max-width:594;" + "-fx-min-width:594");
+    StackPane stackAnim = new StackPane();
+    heroSpin = new HBox(2);
+	ImageView euclidCursor = new ImageView( new Image("AppImages/euclidCursor.png", 25,20,false,true));
+    StackPane.setAlignment(euclidCursor, Pos.BOTTOM_CENTER);
+    stackAnim.getChildren().addAll(heroSpin, euclidCursor);
+    heroSpin.setStyle("-fx-background-color: linear-gradient(to right, slateblue, darkslateblue);" +"-fx-max-width:594;" + "-fx-min-width:594");
     heroSpin.setAlignment(Pos.CENTER);
     Rectangle spinRect = new Rectangle(594,84);
     heroSpin.setClip(spinRect);
-    
-    heroAnimation.setNode(tesa1);
-    heroAnimation.setFromX(50);
-    heroAnimation.setToX(-100);
-    heroAnimation.play();
-    heroSpin.getChildren().addAll(tesa3,spl,tesa2,spl2,tesa1,spl3,tesa4);
+    ImageView[] heroImageArr = baseHeroIcons(heroObs);
+    heroSpin.getChildren().addAll(heroImageArr[0],heroImageArr[1],heroImageArr[2],heroImageArr[3]);
     
     Image bottomImageSpin = new Image("AppImages/bottomSpin.png");
     Image topImageSpin = new Image("AppImages/topSpin.png");
@@ -205,8 +213,8 @@ class RandomMode {
     animPane.setRight(imageVievRightSpin);
     
     
-    animPane.setCenter(heroSpin);
-    animPane.setStyle("-fx-background-color:indigo;" + "-fx-max-width:600;" + "-fx-min-width:600;");
+    animPane.setCenter(stackAnim);
+    animPane.setStyle("-fx-background-color: indigo;" + "-fx-max-width:600;" + "-fx-min-width:600;");
     
     //Панель полученного героя
     BorderPane randomisedHeroPanel = new BorderPane();
@@ -246,8 +254,24 @@ class RandomMode {
       @Override
       public void handle (ActionEvent ae) {
 
-    	 //System.out.println(animPane.getHeight() + " " + animPane.getWidth()); 
-    	 Image heroIconImage = new Image("AppImages/HeroStack.png");
+        allHeroIcons();
+        
+    	ParallelTransition mainAnimation = new ParallelTransition();
+    	 
+    	for (Node imageForAnimation :  heroSpin.getChildren()) {
+   	   	    TranslateTransition animationForHeroImageView = new TranslateTransition(Duration.seconds(2));
+   	   	    animationForHeroImageView.setToX(-256);
+   	   	    animationForHeroImageView.setNode(imageForAnimation); 
+   	   	    mainAnimation.getChildren().add(animationForHeroImageView);
+   	    }
+   	    
+   	    mainAnimation.setAutoReverse(true);
+   	    mainAnimation.setCycleCount(Timeline.INDEFINITE);
+   	    mainAnimation.play();
+    	    
+    	 //System.out.println("On first time"); 
+    	  
+   	     Image heroIconImage = new Image("AppImages/HeroStack.png");
     	 ImageView heroIconImageView = new ImageView(heroIconImage);
     	 centerStack.getChildren().add(heroIconImageView);
     	 TranslateTransition menuTranslation = new TranslateTransition(Duration.millis(1500), heroIconImageView);
@@ -268,6 +292,7 @@ class RandomMode {
          Timeline labelTimeline = new Timeline(labelKey);
          labelTimeline.setCycleCount(1);
          labelTimeline.play();
+         
       }
     });
 
@@ -311,6 +336,43 @@ class RandomMode {
     
 
     return randomGUI;
+  }
+  
+  private ImageView[]  allHeroIcons() {
+	  ImageView[] allView = new ImageView[heroObs.size()];
+	  for (int x = 2; x<heroObs.size(); x++) {
+		  
+	  }
+      return allView;
+  }
+  
+  static ImageView[] baseHeroIcons(ObservableList<CheckBox> argCheckList) {
+		ImageView[] result =  null;
+	    File picFolderFile = new File("./bin/heroImages");
+	    String[] heroIconArray = picFolderFile.list();
+	    ArrayList<String> namesForView = new ArrayList<String>();
+	    for(int c = 2; c<argCheckList.size(); c++) {
+	    	if(argCheckList.get(c).isSelected()) {
+	    		namesForView.add(heroIconArray[c-2]);
+	    	}
+	    }
+		if(namesForView.size() < 4) {
+			int x = 0;
+			result =  new ImageView[namesForView.size()];
+			for(String tempName : namesForView) {
+			    ImageView noName  = new ImageView( new Image("heroImages/" + tempName, 150,84,false,true));
+			    result[x] = noName;
+			    x++;
+			}
+		} else {
+			ImageView hero0 = new ImageView( new Image("heroImages/" + namesForView.get(0), 150,84,false,true));
+			ImageView hero1 = new ImageView(new Image("heroImages/" + namesForView.get(1),150,84,false,true));
+			ImageView hero2 = new ImageView(new Image("heroImages/" + namesForView.get(2),150,84,false,true));
+			ImageView hero3 = new ImageView(new Image("heroImages/" + namesForView.get(3),150,84,false,true));
+			result =  new ImageView[4];
+			result[0] = hero0; result[1] = hero1; result[2] = hero2; result[3] = hero3;
+		}
+	    return result;
   }
 
   private void shadowM(Button but) {

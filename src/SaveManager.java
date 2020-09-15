@@ -14,8 +14,11 @@ import javafx.scene.input.*;
 import javafx.collections.*;
 
 class SaveManager {
+	
+ ObservableList<CheckBox> checkList;
+ HBox heroSpinForLoad;
 
- Stage saveStage;
+Stage saveStage;
  private double xOffset;
  private double yOffset;
  ArrayList<Button> saveloadButtonArray;
@@ -276,9 +279,20 @@ class SaveManager {
 	   			list =  (boolean[]) inputStream.readObject();
 	   	        inputStream.close();
 	   	    } catch (Exception ex) {ex.printStackTrace();}
-	   	     for(int count = 0; count<checkBoxForLoad.size();count++) {
+	   	    for(int count = 0; count<checkBoxForLoad.size();count++) {
 	   	    	 checkBoxForLoad.get(count).setSelected(list[count]);
-	   	     }
+	   	    }
+		    ImageView[] heroImageActionArr = RandomMode.baseHeroIcons(checkList);
+		    heroSpinForLoad.getChildren().clear();
+		    if(heroImageActionArr.length < 4) {
+
+		    	for(ImageView tempImageView : heroImageActionArr) {
+    		    heroSpinForLoad.getChildren().add(tempImageView);
+		    	}
+		    	
+		    } else {
+		    heroSpinForLoad.getChildren().addAll(heroImageActionArr[0],heroImageActionArr[1],heroImageActionArr[2],heroImageActionArr[3]);
+		    }
 	    	 confirmLoadStage.close(); 
 	     }
 	   });
@@ -545,5 +559,12 @@ class SaveManager {
 		File removeFile = new File ("./bin/saves/" +  saveloadButtonArray.get(delButtonIndex).getText() + ".ser");
 		removeFile.delete();
 		saveloadButtonArray.get(delButtonIndex).setText(numberInName[0] + ". " + "Empty");
+ 	}
+ 	
+ 	public void setObserverList(ObservableList<CheckBox> settedList) {
+ 		checkList = settedList;
+ 	}
+ 	 public void setHeroSpinForLoad(HBox heroSpinForLoad) {
+ 		this.heroSpinForLoad = heroSpinForLoad;
  	}
 }

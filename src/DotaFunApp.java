@@ -92,6 +92,7 @@ public class DotaFunApp extends Application{
                           "-fx-border-color: rgb(59, 0, 95);" +
                           "-fx-border-width: 2 2 2 0;" +
                           "-fx-border-radius: 0 12 12 0;" +
+                          "-fx-background-insets: 0;" +
                           "-fx-background-radius: 0 14 14 0" 
                      );
 
@@ -116,6 +117,7 @@ public class DotaFunApp extends Application{
                           "-fx-border-width: 2 2 2 0;" +
                           "-fx-border-radius: 0 12 12 0;" +
                           "-fx-background-radius: 0 14 14 0;" +
+                          "-fx-background-insets: 0;" +
                           "-fx-effect: dropshadow(gaussian, #414040, 6, 0, 3, 0)");
 
         }
@@ -133,6 +135,7 @@ public class DotaFunApp extends Application{
                           "-fx-border-color: rgb(59, 0, 95);" +
                           "-fx-border-width: 2 2 2 0;" +
                           "-fx-border-radius: 0 12 12 0;" +
+                          "-fx-background-insets: 0;" +
                           "-fx-background-radius: 0 14 14 0");
         }
     });
