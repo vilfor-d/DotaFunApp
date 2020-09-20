@@ -11,11 +11,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.animation.*;
+import javafx.application.Platform;
+
 import java.io.*;
+import java.security.acl.Group;
 import java.util.*;
 
 class RandomMode { 
 	
+	int ImageViewCount = 0;
     ListView<CheckBox> heroListView;
     ObservableList<CheckBox> heroObs;
 	HBox heroSpin;
@@ -227,7 +231,7 @@ class RandomMode {
     ImageView imageRight = new ImageView(rightimage);
     centerStack = new StackPane();
     centerStack.setStyle( "-fx-min-height:82;" + "-fx-max-height:82");
-    Rectangle stackPaneClip = new Rectangle (470,83);
+    Rectangle stackPaneClip = new Rectangle (470,84);
     centerStack.setClip(stackPaneClip);
     label = new Label("Unknown hero");
     centerStack.getChildren().add(label);
@@ -253,23 +257,45 @@ class RandomMode {
 
       @Override
       public void handle (ActionEvent ae) {
-
-        allHeroIcons();
         
-    	ParallelTransition mainAnimation = new ParallelTransition();
-    	 
-    	for (Node imageForAnimation :  heroSpin.getChildren()) {
-   	   	    TranslateTransition animationForHeroImageView = new TranslateTransition(Duration.seconds(2));
-   	   	    animationForHeroImageView.setToX(-256);
-   	   	    animationForHeroImageView.setNode(imageForAnimation); 
-   	   	    mainAnimation.getChildren().add(animationForHeroImageView);
-   	    }
-   	    
-   	    mainAnimation.setAutoReverse(true);
-   	    mainAnimation.setCycleCount(Timeline.INDEFINITE);
-   	    mainAnimation.play();
-    	    
-    	 //System.out.println("On first time"); 
+    	ArrayList<ImageView>  allWorkingIM = allHeroIcons();
+    	heroSpin.getChildren().clear();
+    	if(allWorkingIM.size()<4) {
+    		for(int j = 0; j<allWorkingIM.size(); j++) {
+            	heroSpin.getChildren().add(allWorkingIM.get(j));
+            	ImageViewCount++;
+    		}
+    	} else {
+    	for(int notMoreThenFive = 0; notMoreThenFive<5; notMoreThenFive++) {
+        	heroSpin.getChildren().add(allWorkingIM.get(notMoreThenFive));
+        	ImageViewCount++;
+    	}}
+    	
+
+		Timeline mainTimeline = new Timeline();
+		for(int f = 0, t = -150; f<5; f++, t=t-150) {
+			KeyFrame key = new KeyFrame(Duration.seconds(f+1),evt -> {
+			//пытаюсь в обновление
+			heroSpin.getChildren().add(allWorkingIM.get(ImageViewCount));
+			TranslateTransition trs = new TranslateTransition(Duration.seconds(5));
+			trs.setNode(heroSpin.getChildren().get(heroSpin.getChildren().size()-1));
+			trs.setToX(-750);
+			trs.play();
+			//KeyFrame newKey = new KeyFrame(Duration.seconds(5), new KeyValue(heroSpin.getChildren().get(heroSpin.getChildren().size()-1).translateXProperty(), -750));
+			//mainTimeline.getKeyFrames().add(newKey);
+			//mainTimeline.play();
+			heroSpin.getChildren().remove(0);
+			ImageViewCount++;		
+			
+			
+			}
+			, new KeyValue(heroSpin.getChildren().get(f).translateXProperty(), t));
+			mainTimeline.getKeyFrames().add(key);
+		}
+		mainTimeline.setRate(1);
+        mainTimeline.setCycleCount(1);
+		mainTimeline.play();
+		
     	  
    	     Image heroIconImage = new Image("AppImages/HeroStack.png");
     	 ImageView heroIconImageView = new ImageView(heroIconImage);
@@ -338,10 +364,16 @@ class RandomMode {
     return randomGUI;
   }
   
-  private ImageView[]  allHeroIcons() {
-	  ImageView[] allView = new ImageView[heroObs.size()];
+  private ArrayList<ImageView>  allHeroIcons() {
+	  ArrayList<ImageView> allView = new ArrayList<ImageView>();
+	  File animationPicturesFile = new File("./bin/heroImages");
+	  String[] animatonIconArray = animationPicturesFile.list();
+	  
 	  for (int x = 2; x<heroObs.size(); x++) {
-		  
+		  if(heroObs.get(x).isSelected()) {
+			ImageView IV = new ImageView( new Image("heroImages/" + animatonIconArray[x-2], 150,84,false,true));
+			allView.add(IV);
+		  }
 	  }
       return allView;
   }
