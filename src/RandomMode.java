@@ -47,14 +47,13 @@ class RandomMode {
     VBox.setVgrow(heroListView, Priority.ALWAYS);
     AnchorPane rightBox = new AnchorPane();
 
-
+    heroIconArray = new ArrayList<String>();
     String path = RandomMode.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String decodedPath = null;
       try {
  	decodedPath = URLDecoder.decode(path, "UTF-8");
       } catch (Exception ex) {ex.printStackTrace();}
 
-    heroIconArray = new ArrayList<String>();
     try {
       JarFile jf = new JarFile(new File(decodedPath));
       Enumeration e = jf.entries();
@@ -66,8 +65,15 @@ class RandomMode {
 	  heroIconArray.add(arrForSplit[1]);
 	}
       }
-    } catch (Exception ex) {ex.printStackTrace();}
-    heroIconArray.remove(0);
+      heroIconArray.remove(0);
+    } catch (Exception ex) {
+     
+      File secondVar = new File("./heroImages");
+      String[] heroImagesList = secondVar.list();
+      for(String nameFromList : heroImagesList) {
+        heroIconArray.add(nameFromList);
+      }
+    }
     
     saveButton = new Button("Save");
     saveButton.setOnAction(new EventHandler<ActionEvent>() {
