@@ -1,2 +1,2 @@
 # DotaFunApp
-Some options for a variety of gameplay
+The spinner app will randomly choose a hero for you
