@@ -1,3 +1,5 @@
+package dota;
+
 import javafx.application.*;
 import javafx.stage.*;
 import javafx.geometry.*;
@@ -25,6 +27,7 @@ public class DotaFunApp extends Application{
   FlowPane menuFlow;
   StackPane centerStack; 
 
+
   public static void main (String[] args) {
  
     launch();
@@ -36,15 +39,16 @@ public class DotaFunApp extends Application{
 
     System.setProperty("prism.lcdtext", "false");
     primaryStage.setTitle("Dota Fun App");
-    InputStream iconStream = getClass().getResourceAsStream("AppImages/icon.png");
+    InputStream iconStream = getClass().getResourceAsStream("/AppImages/icon.png");
     Image image = new Image(iconStream);
     primaryStage.getIcons().add(image);
+try {
+    iconStream.close();
+} catch(Exception ex) {ex.printStackTrace();}
     StackPane stackMain = new StackPane();
     centerStack = new StackPane();
     AnchorPane anchPane = new AnchorPane();
     anchPane.setStyle( "-fx-background-color: rgb(92, 76, 141);");
-
-  
     VBox menuBox = new VBox();
     menuBox.setSpacing(5.0);
     menuBox.setStyle( "-fx-background-color: steelblue;");
@@ -250,23 +254,27 @@ public class DotaFunApp extends Application{
     menuFlow.setAlignment(Pos.CENTER);
     menuFlow.setHgap(10.0);
 
- Button randomButton = new Button();
+    Button randomButton = new Button();
     Button challengeButton = new Button();
     Button firstButton = new Button();
 
+    InputStream randomImageStream = getClass().getResourceAsStream("/AppImages/randomImage.png");
+    Image randomImage = new Image(randomImageStream);
+try{
+    randomImageStream.close();
+} catch(Exception ex) {ex.printStackTrace();}
+    BackgroundImage randomBI = new BackgroundImage(randomImage ,BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+    randomButton.setBackground(new Background(randomBI));
+    
     randomButton.setStyle("-fx-min-width: 150px; " +
                          "-fx-min-height: 250px; " +
                           "-fx-max-width: 150px; " +
                           "-fx-max-height: 250px;" +
                           "-fx-font-family: cursive; " +
                           "-fx-font-size: 14pt;" +
-                          "-fx-background-image: url('AppImages/randomImage.png');" +
                           "-fx-border-radius: 20 20 20 20;" +
-                          "-fx-background-radius: 20 20 20 20;" +
-                          "-fx-background-color: black; " +
-                          "-fx-background-insets: 0;" +
                           "-fx-effect: dropshadow(gaussian, #414040, 6, 0, 3, 3)"
-    );    
+    );   
 
     randomButton.addEventHandler(MouseEvent.MOUSE_ENTERED, 
       new EventHandler<MouseEvent>() {

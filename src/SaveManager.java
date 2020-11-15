@@ -1,3 +1,5 @@
+package dota;
+
 import javafx.stage.*;
 import javafx.scene.control.*;
 import javafx.scene.*;
@@ -109,17 +111,20 @@ Stage saveStage;
      public void handle(ActionEvent ae) {
       
        String [] nameArr = but.getText().split(". ", 2);
-       File saveRep = new File("./bin/saves");
+       File saveRep = new File("./saves");
+       if(saveRep.exists()==false) {
+ 	 saveRep.mkdir();
+       }
        for (String fileName : saveRep.list()) {
     	   String[] fileArr = fileName.split(". ",2);
     	   if (nameArr[0].equals(fileArr[0]))  {
-    		   File delFile = new File("./bin/saves/" + fileName);
+    		   File delFile = new File("./saves/" + fileName);
     		   delFile.delete();
     	   }
        }
        but.setText(nameArr[0] + ". " + nameField.getText().replaceAll("[\\?\\:\\<\\>\\|\\*\"\\/\\\\]",""));
        try {
-    	   ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./bin/saves/" + but.getText().replaceAll("[\\?\\:\\<\\>\\|\\*\"\\/\\\\]","") + ".ser"));
+    	   ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream("./saves/" + but.getText().replaceAll("[\\?\\:\\<\\>\\|\\*\"\\/\\\\]","") + ".ser"));
     	   boolean[] checkBoxArray = checkList;
     	   outputStream.writeObject(checkBoxArray);
     	   outputStream.close();
@@ -275,7 +280,7 @@ Stage saveStage;
 	    		 
 	    	boolean[] list = null;
 	   	    try {
-	   	    	ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("./bin/saves/" + button.getText() + ".ser"));
+	   	    	ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream("./saves/" + button.getText() + ".ser"));
 	   			list =  (boolean[]) inputStream.readObject();
 	   	        inputStream.close();
 	   	    } catch (Exception ex) {ex.printStackTrace();}
@@ -285,13 +290,14 @@ Stage saveStage;
 		    ImageView[] heroImageActionArr = RandomMode.baseHeroIcons(checkList);
 		    heroSpinForLoad.getChildren().clear();
 		    if(heroImageActionArr.length < 4) {
-
-		    	for(ImageView tempImageView : heroImageActionArr) {
-    		    heroSpinForLoad.getChildren().add(tempImageView);
+		    	for(int cnt = 0; cnt<6-heroImageActionArr.length; cnt++) {
+				    ImageView[] tempImageActionArr = RandomMode.baseHeroIcons(checkList);
+			    	for(ImageView tempImageView : tempImageActionArr) {
+	    		    heroSpinForLoad.getChildren().add(tempImageView);
+			    	}
 		    	}
-		    	
 		    } else {
-		    heroSpinForLoad.getChildren().addAll(heroImageActionArr[0],heroImageActionArr[1],heroImageActionArr[2],heroImageActionArr[3]);
+		     heroSpinForLoad.getChildren().addAll(heroImageActionArr[0],heroImageActionArr[1],heroImageActionArr[2],heroImageActionArr[3],heroImageActionArr[4]);
 		    }
 	    	 confirmLoadStage.close(); 
 	     }
@@ -328,8 +334,11 @@ Stage saveStage;
    saveStage.initModality(Modality.APPLICATION_MODAL);
    saveStage.initStyle(StageStyle.UNDECORATED);
    saveStage.initStyle(StageStyle.TRANSPARENT);
-   InputStream saveIcon = getClass().getResourceAsStream("AppImages/saveIcon.png");
+   InputStream saveIcon = getClass().getResourceAsStream("/AppImages/saveIcon.png");
    Image imageStage = new Image(saveIcon);
+   try {
+     saveIcon.close();
+   } catch(Exception ex) {ex.printStackTrace();}
    saveStage.getIcons().add(imageStage);
 
    if(mode=="save") {
@@ -343,9 +352,6 @@ Stage saveStage;
 
 
    Button closeButton = new Button();
-   
-   closeButton.setStyle("-fx-background-image: url('AppImages/cross')");
-
    closeButton.setOnAction(new EventHandler<ActionEvent>() { 
 
      public void handle(ActionEvent ev) {
@@ -353,15 +359,24 @@ Stage saveStage;
    saveStage.close();
    }});
 
-   InputStream iconStream = getClass().getResourceAsStream("AppImages/cross.png");
-   Image image = new Image(iconStream);
-   ImageView iv = new ImageView(image);
+   InputStream closeStream = getClass().getResourceAsStream("/AppImages/cross.png");
+   Image imageClose = new Image(closeStream);
+   try {
+     closeStream.close();
+   } catch(Exception ex) {ex.printStackTrace();}
+   ImageView iv = new ImageView(imageClose);
    closeButton.setGraphic(iv);
    closeButton.setStyle("-fx-background-color: transparent");
 
 
    BorderPane borderMain = new BorderPane();
-   borderMain.setStyle("-fx-background-image: url('AppImages/saveloadBack.jpeg')");
+   InputStream borderImageStream = getClass().getResourceAsStream("/AppImages/saveloadBack.jpeg");
+   Image borderImage = new Image(borderImageStream);
+   try {
+     borderImageStream.close();
+   } catch(Exception ex) {ex.printStackTrace();}
+   BackgroundImage borderBI= new BackgroundImage(borderImage ,BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+   borderMain.setBackground(new Background(borderBI));
 
    Rectangle rect = new Rectangle(350,450);
    rect.setArcHeight(60.0);
@@ -411,7 +426,11 @@ Stage saveStage;
    saveloadButtonArray = new ArrayList<Button>();
    deleteButtonArray = new ArrayList<Button>();
 
-   File checkFile = new File ("./bin/saves" );
+   File checkFile = new File ("./saves" );
+       if(checkFile.exists()==false) {
+ 	 checkFile.mkdir();
+       }
+
    for (int x = 0; x<7; x++) {
 	 boolean existFile = false;
      GridPane gridPane = new GridPane();
@@ -449,7 +468,14 @@ Stage saveStage;
 
      fileButton.setStyle("-fx-font-family: Cambria;" + "-fx-font-size: 17;" + "-fx-background-color:cornflowerblue;" + "-fx-background-radius: 20 0 0 20;" + "-fx-text-fill:black;" + "-fx-background-insets:0");
      fileButton.setAlignment(Pos.BASELINE_LEFT);
-     deleteButton.setStyle("-fx-background-color:cornflowerblue;" + "-fx-background-radius: 0 20 20 0;" + "-fx-background-insets:0;" + "-fx-graphic: url('AppImages/garbageIcon.png')");
+     deleteButton.setStyle("-fx-background-color:cornflowerblue;" + "-fx-background-radius: 0 20 20 0;" + "-fx-background-insets:0;");
+     InputStream deleteImageStream = getClass().getResourceAsStream("/AppImages/garbageIcon.png");
+     Image deleteImage = new Image(deleteImageStream);
+     try {
+       deleteImageStream.close();
+     } catch(Exception ex) {ex.printStackTrace();}
+     ImageView deleteImageView = new ImageView(deleteImage);
+     deleteButton.setGraphic(deleteImageView);
      gridPane.add(fileButton,0,0);
      gridPane.add(deleteButton,1,0);
 
@@ -556,7 +582,7 @@ Stage saveStage;
  		
 		int delButtonIndex = deleteButtonArray.indexOf(deleteButton);
 		String[] numberInName = saveloadButtonArray.get(delButtonIndex).getText().split(". ", 2);
-		File removeFile = new File ("./bin/saves/" +  saveloadButtonArray.get(delButtonIndex).getText() + ".ser");
+		File removeFile = new File ("./saves/" +  saveloadButtonArray.get(delButtonIndex).getText() + ".ser");
 		removeFile.delete();
 		saveloadButtonArray.get(delButtonIndex).setText(numberInName[0] + ". " + "Empty");
  	}
