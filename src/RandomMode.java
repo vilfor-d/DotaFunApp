@@ -22,7 +22,7 @@ class RandomMode {
 	
     ListView<CheckBox> heroListView;
     ObservableList<CheckBox> heroObs;
-	HBox heroSpin;
+    HBox heroSpin;
     Label label;
     Button saveButton;
     Button loadButton;
@@ -215,7 +215,7 @@ class RandomMode {
     VBox centerVbox = new VBox();
     centerVbox.setAlignment(Pos.CENTER);
     
-    //Панель анимации
+    //ГЏГ Г­ГҐГ«Гј Г Г­ГЁГ¬Г Г¶ГЁГЁ
     BorderPane animPane = new BorderPane();
     StackPane stackAnim = new StackPane();
     heroSpin = new HBox();
@@ -261,7 +261,7 @@ class RandomMode {
     animPane.setCenter(stackAnim);
     animPane.setStyle("-fx-background-color: indigo;" + "-fx-max-width:600;" + "-fx-min-width:600;");
     
-    //Панель полученного героя
+    //ГЏГ Г­ГҐГ«Гј ГЇГ®Г«ГіГ·ГҐГ­Г­Г®ГЈГ® ГЈГҐГ°Г®Гї
     BorderPane randomisedHeroPanel = new BorderPane();
     randomisedHeroPanel.setStyle("-fx-min-height:80;" + "-fx-min-width:466;" + "-fx-max-width:466;" +"-fx-background-color: linear-gradient(from 0% 15% to 0% 70% , slateblue,gray);" +  "-fx-background-radius: 0 0 10 10");
     InputStream botImageStream = getClass().getResourceAsStream("/AppImages/bottom.png");
@@ -290,7 +290,7 @@ class RandomMode {
     randomisedHeroPanel.setLeft(imageLeft);
     randomisedHeroPanel.setRight(imageRight);
 
-    //Кнопка рандома
+    //ГЉГ­Г®ГЇГЄГ  Г°Г Г­Г¤Г®Г¬Г 
     FlowPane randomBPane = new FlowPane();
     randomBPane.setAlignment(Pos.CENTER);
     Button randomButton = new Button();
@@ -358,7 +358,7 @@ class RandomMode {
         	mainTimeline.play();
         	
         	
-       	 //Нижняя картинка
+       	 //ГЌГЁГ¦Г­ГїГї ГЄГ Г°ГІГЁГ­ГЄГ 
          InputStream heroIconeStream = getClass().getResourceAsStream("/AppImages/HeroStack.png");
       	 Image heroIconImage = new Image(heroIconeStream);
          try {
